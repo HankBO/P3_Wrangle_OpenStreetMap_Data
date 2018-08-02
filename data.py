@@ -62,11 +62,25 @@ def shape_element(el, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIELDS):
     tags = [shape_tag(el, t) for t in el.iter('tag')]
             
     if el.tag == 'node':
+        for tag in ele.iter("tag"):
+            if audit.is_street_name(tag):
+                fix_name = audit.update_name(tag.attrib['v'], audit.mapping)
+		tag.attrib['v'] = fix_name
+            if audit.is_postcode(tag):
+		fix_pc = audit.update_postcode(tag.attrib['v'])
+		tag.attrib['v'] = fix_pc
         node_attribs = {f: el.attrib[f] for f in node_attr_fields}
         
         return {'node': node_attribs, 'node_tags': tags}
         
     elif el.tag == 'way':
+        for tag in ele.iter("tag"):
+            if audit.is_street_name(tag):
+                fix_name = audit.update_name(tag.attrib['v'], audit.mapping)
+		tag.attrib['v'] = fix_name
+            if audit.is_postcode(tag):
+		fix_pc = audit.update_postcode(tag.attrib['v'])
+		tag.attrib['v'] = fix_pc
         way_attribs = {f: el.attrib[f] for f in way_attr_fields}
         
         way_nodes = [shape_way_node(el, i, nd) \
